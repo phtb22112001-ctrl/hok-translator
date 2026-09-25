@@ -13,21 +13,19 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build with Android Build Action
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 29
-        target: default
-        arch: x86_6
-        disable-animations: true
-        script: ./gradlew assembleRelease || gradle assembleRelease
-
-    - name: Fallback Build
-      if: failure()
+    - name: Build with Gradle CLI
       run: |
-        # Tự sinh gradle wrapper nếu thiếu
-        gradle wrapper
-        ./gradlew assembleRelease
+        # Tải và cài đặt nhanh Gradle trực tiếp trên Ubuntu runner
+        sudo apt-get update && sudo apt-get install -y gradle
+        
+        # Cấp phép Android SDK cơ bản
+        mkdir -p $HOME/android-sdk/licenses
+        echo "24333f1a91d69192f1536b39de5522960f585d68" > $HOME/android-sdk/licenses/android-sdk-license
+        echo "d56f5187479451eabf01fb78af6dfcb131964887" >> $HOME/android-sdk/licenses/android-sdk-license
+        export ANDROID_HOME=$HOME/android-sdk
+        
+        # Build ứng dụng
+        gradle assembleRelease
 
     - uses: actions/upload-artifact@v4
       with:
