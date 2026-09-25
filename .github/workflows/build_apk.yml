@@ -13,14 +13,15 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Generate Gradle Wrapper & Build
+    - name: Download and Setup Gradle Wrapper
       run: |
-        # Tự động tạo bộ công cụ gradlew ngay tại chỗ
-        gradle wrapper --gradle-version 8.5
-        
-        # Cấp quyền thực thi và build
+        # Tải bộ wrapper chuẩn về để không bao giờ bị thiếu file thực thi
+        gradle wrapper
         chmod +x ./gradlew
-        ./gradlew assembleRelease
+
+    - name: Build APK with Gradle Wrapper
+      run: |
+        ./gradlew assembleRelease --no-daemon
 
     - uses: actions/upload-artifact@v4
       with:
