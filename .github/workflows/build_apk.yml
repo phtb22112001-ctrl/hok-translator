@@ -13,18 +13,14 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build with Gradle CLI
+    - name: Setup Android SDK and Build Tools
+      uses: android-actions/setup-android@v3
+      with:
+        build-tools-version: 33.0.2
+        android-version: platforms;android-33
+
+    - name: Build with Gradle
       run: |
-        # Tải và cài đặt nhanh Gradle trực tiếp trên Ubuntu runner
-        sudo apt-get update && sudo apt-get install -y gradle
-        
-        # Cấp phép Android SDK cơ bản
-        mkdir -p $HOME/android-sdk/licenses
-        echo "24333f1a91d69192f1536b39de5522960f585d68" > $HOME/android-sdk/licenses/android-sdk-license
-        echo "d56f5187479451eabf01fb78af6dfcb131964887" >> $HOME/android-sdk/licenses/android-sdk-license
-        export ANDROID_HOME=$HOME/android-sdk
-        
-        # Build ứng dụng
         gradle assembleRelease
 
     - uses: actions/upload-artifact@v4
