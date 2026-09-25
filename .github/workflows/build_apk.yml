@@ -1,10 +1,27 @@
-    - name: Build APK with Gradle
+name: Build APK
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Build with Gradle
       run: |
-        # Tự động cấp phép license Android SDK
         mkdir -p android-sdk/licenses
         echo "24333f1a91d69192f1536b39de5522960f585d68" > android-sdk/licenses/android-sdk-license
         echo "d56f5187479451eabf01fb78af6dfcb131964887" >> android-sdk/licenses/android-sdk-license
         export ANDROID_HOME=$PWD/android-sdk
-
-        # Sử dụng lệnh gradle trực tiếp thay vì gradlew
         gradle assembleRelease
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: app-release
+        path: app/build/outputs/apk/release/app-release.apk
