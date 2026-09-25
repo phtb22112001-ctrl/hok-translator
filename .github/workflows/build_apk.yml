@@ -13,14 +13,11 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
     - name: Build with Gradle
       run: |
-        # Cấp phép license vào thư mục SDK có sẵn của GitHub Actions
-        mkdir -p $ANDROID_SDK_ROOT/licenses
-        echo "24333f1a91d69192f1536b39de5522960f585d68" > $ANDROID_SDK_ROOT/licenses/android-sdk-license
-        echo "d56f5187479451eabf01fb78af6dfcb131964887" >> $ANDROID_SDK_ROOT/licenses/android-sdk-license
-        
-        # Chạy build trực tiếp
         gradle assembleRelease
 
     - uses: actions/upload-artifact@v4
