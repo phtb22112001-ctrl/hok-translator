@@ -13,15 +13,14 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Android SDK and Build Tools
-      uses: android-actions/setup-android@v3
-      with:
-        build-tools-version: 33.0.2
-        android-version: platforms;android-33
-
-    - name: Build with Gradle
+    - name: Generate Gradle Wrapper & Build
       run: |
-        gradle assembleRelease
+        # Tự động tạo bộ công cụ gradlew ngay tại chỗ
+        gradle wrapper --gradle-version 8.5
+        
+        # Cấp quyền thực thi và build
+        chmod +x ./gradlew
+        ./gradlew assembleRelease
 
     - uses: actions/upload-artifact@v4
       with:
