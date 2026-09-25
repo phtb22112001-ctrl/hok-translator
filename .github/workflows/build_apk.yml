@@ -24,28 +24,36 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
-        with:
-          packages: ''
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager "platforms;android-33" "build-tools;30.0.3"
+          yes | sdkmanager --licenses || true
 
       - name: Setup Gradle 7.5
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '7.5'
 
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses || true
-
-      - name: Show Android SDK
+      - name: Check environment
         run: |
+          java -version
+          gradle --version
           echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager --version
-          ls "$ANDROID_HOME"
+          ls "$ANDROID_HOME/platforms"
+          ls "$ANDROID_HOME/build-tools"
 
       - name: Build Release APK
-        run: gradle assembleRelease --no-daemon
+        run: |
+          gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Find APK
+        run: |
+          find app/build/outputs -type f -name "*.apk" -print
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
